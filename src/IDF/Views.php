@@ -40,9 +40,12 @@ class IDF_Views
     public function index($request, $match)
     {
         $projects = self::getProjects($request->user);
+	      $activity = self::getActivity($request->user);
         return Pluf_Shortcuts_RenderToResponse('idf/index.html', 
                                                array('page_title' => __('Projects'),
-                                                     'projects' => $projects),
+                                                     'projects' => $projects,
+                                                     'activities' => $activity,
+						),
                                                $request);
     }
 
@@ -299,6 +302,28 @@ class IDF_Views
                                                      ),
                                                $request);
 
+    }
+
+    public function getActivity($user) 
+    {
+      $db =& Pluf::db();
+      $sql = "
+      select p.name as project_name, p.shortname, 'issue'::text as type, summary, i.id, creation_dtime, ''::text as scm_id from idf_issues i LEFT JOIN idf_projects p on project=p.id
+      UNION
+      select p.name as project_name, p.shortname, 'commit'::text as type, summary, c. id, creation_dtime, scm_id from idf_commits c LEFT JOIN idf_projects p on project=p.id
+--      UNION
+--      select p.name as project_name, p.shortname, 'comment'::text as type, content as summary, c.id, creation_dtime, ''::text as scm_id FROM idf_review_comments c LEFT JOIN idf_projects p on project=p.id
+      ORDER BY creation_dtime DESC
+      LIMIT 100
+      ";
+      foreach ($db->select($sql) as $a) {
+        unset ($aa);
+        foreach($a as $k=>$v) {
+          $aa->$k = $v;
+        }
+        $activities[] = $aa;
+      }
+      return $activities;
     }
 
     /**
