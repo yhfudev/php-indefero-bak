@@ -2,7 +2,8 @@
 {block docclass}yui-t1{/block}
 {block tabhome} class="active"{/block}
 {block subtabs}<a href="{url 'IDF_Views::index'}" class="active">{trans 'Projects'}</a>{/block}
-{block body}
+{block projects}
+
 {if $projects.count() == 0}
 <p>{trans 'No projects managed with InDefero were found.'}</p>
 {if $isAdmin}
@@ -13,6 +14,19 @@
 <li>{if $p.private}<img style="vertical-align: text-bottom;" src="{media '/idf/img/lock.png'}" alt="{trans 'Private project'}" /> {/if}<a href="{url 'IDF_Views_Project::home', array($p.shortname)}">{$p}</a>{if $p.shortdesc}, {$p.shortdesc}{/if}</li>
 {/foreach}</ul>
 {/if}
+{/block}
+
+{block body}
+
+<h3>Latest activity</h3>
+
+<table>
+  {foreach $activities as $a}
+      {aurl 'url', 'IDF_Views_Source::commit', array($a.shortname, $a.scm_id)}
+    <tr><th>{$a.project_name}</th><td align="left"> {$a.summary}<br/><a href="{$url}">{$a.scm_id}</a></br>by <strong>{$a.author}</strong><br/></td></tr>
+  {/foreach}
+</table>
+
 {/block}
 {block context}
 <p><strong>{trans 'Managed Projects:'}</strong> {$projects.count()}</p>

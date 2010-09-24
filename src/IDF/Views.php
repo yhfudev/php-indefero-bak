@@ -301,6 +301,24 @@ class IDF_Views
 
     }
 
+    public function getActivity($user) 
+    {
+      $db =& Pluf::db();
+      $sql = "
+      select p.name as project_name, c.origauthor as author, p.shortname, 'commit'::text as type, summary, c.id, creation_dtime, scm_id from idf_commits c LEFT JOIN idf_projects p on project=p.id
+      ORDER BY creation_dtime DESC
+      LIMIT 500
+      ";
+      foreach ($db->select($sql) as $a) {
+        unset ($aa);
+        foreach($a as $k=>$v) {
+          $aa->$k = $v;
+        }
+        $activities[] = $aa;
+      }
+      return $activities;
+    }
+
     /**
      * Returns a list of projects accessible for the user.
      *
