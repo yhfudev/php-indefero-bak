@@ -65,7 +65,7 @@ class IDF_Views_Issue
                               );
         $pag->configure($list_display, array(), array('id', 'status', 'modif_dtime'));
         $pag->items_per_page = 10;
-        $pag->no_results_text = __('No issues were found.');
+        $pag->no_results_text = __('No issues were found.'. implode(', ', $otags));
         $pag->setFromRequest($request);
         $params = array('project' => $prj,
                         'page_title' => $title,

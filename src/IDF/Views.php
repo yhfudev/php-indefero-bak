@@ -40,9 +40,12 @@ class IDF_Views
     public function index($request, $match)
     {
         $projects = self::getProjects($request->user);
+	      $activity = self::getActivity($request->user);
         return Pluf_Shortcuts_RenderToResponse('idf/index.html', 
                                                array('page_title' => __('Projects'),
-                                                     'projects' => $projects),
+                                                     'projects' => $projects,
+                                                     'activities' => $activity,
+						),
                                                $request);
     }
 
