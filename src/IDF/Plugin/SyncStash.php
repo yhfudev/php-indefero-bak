@@ -24,9 +24,11 @@ class IDF_Plugin_SyncStash
         $plug = new IDF_Plugin_SyncStash();
         switch ($signal) {
         case 'IDF_Project::created':
+            Pluf_Log::event('IDF_Plugin_SyncStash', 'create');
             $plug->processProjectCreate($params['project']);
             break;
         case 'IDF_Project::preDelete':
+            Pluf_Log::event('IDF_Plugin_SyncStash', 'delete');
             $plug->processProjectDelete($params['project']);
             break;
         }
@@ -53,6 +55,8 @@ class IDF_Plugin_SyncStash
         $url = Pluf::f('idf_plugin_syncstash_base_url') . 
             '/rest/api/latest/projects/' . 
             Pluf::f('idf_plugin_syncstash_project') . '/repos';
+        Pluf_Log::debug(array('IDF_Plugin_SyncStash::processProjectCreate',
+            'HTTP POST', array($url, $params)));
         return $this->_http_request($url, $params);
     }
 
@@ -75,6 +79,8 @@ class IDF_Plugin_SyncStash
             '/rest/api/latest/projects/' . 
             Pluf::f('idf_plugin_syncstash_project') . '/repos/' .
             $project->shortname;
+        Pluf_Log::debug(array('IDF_Plugin_SyncStash::processProjectDelete',
+            'HTTP DELETE', array($url, $params)));
         return $this->_http_request($url, $params);
     }
 
@@ -87,6 +93,8 @@ class IDF_Plugin_SyncStash
         }
         $meta = stream_get_meta_data($fp);
         @fclose($fp);
+        Pluf_Log::debug(array('IDF_Plugin_SyncStash::_http_request',
+            'HTTP RESPONSE', $meta));
         if (!isset($meta['wrapper_data'][0]) or $meta['timed_out']) {
             return false;
         }
