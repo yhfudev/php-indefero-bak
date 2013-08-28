@@ -433,6 +433,18 @@ $cfg['mtn_db_access'] = 'local';
 
 
 # ---------------------------------------------------------------------------- #
+#                                Stash section                                 #
+# ---------------------------------------------------------------------------- #
+
+# The url where the stash instance is running, along with the username and
+# password required to access it.
+# $cfg['idf_plugin_syncstash_base_url'] = 'https://user:password@host.com/stash';
+
+# The name of the project that is used to sync the repositories to
+# $cfg['idf_plugin_syncstash_project'] = 'projectname';
+
+
+# ---------------------------------------------------------------------------- #
 #                  Hacker section (for advanced users)                         #
 # ---------------------------------------------------------------------------- #
 
