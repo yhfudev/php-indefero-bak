@@ -41,8 +41,8 @@ $cfg['secret_key'] = '';
 # problems without 'debug' being enabled).
 $cfg['debug'] = true;
 
-# Log options. Set to Pluf_Log::ERROR in production.
-$cfg['log_level'] = Pluf_Log::ALL;
+# Log options. Set to Pluf_Log::ERROR or Pluf_Log::OFF in production.
+Pluf_Log::$level = Pluf_Log::ALL;
 
 
 # ---------------------------------------------------------------------------- #
