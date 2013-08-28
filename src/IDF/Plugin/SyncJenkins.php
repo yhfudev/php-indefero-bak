@@ -24,15 +24,24 @@ class IDF_Plugin_SyncJenkins
         switch ($signal) {
         case 'gitpostupdate.php::run':
             Pluf_Log::event('IDF_Plugin_SyncJenkins', 'update');
-            $plug->processPostUpdate($params['git_dir']);
+            // Chop the ".git" and get what is left
+            $pname = basename($params['git_dir'], '.git');
+            try {
+                $project = IDF_Project::getOr404($pname);
+            } catch (Pluf_HTTP_Error404 $e) {
+                Pluf_Log::event(array('IDF_Plugin_SyncJenkins',
+                    'Project not found.', array($pname, $params)));
+                return false; // Project not found
+            }
+            $plug->processPostUpdate($project);
             break;
         }
     }
 
     /**
-     * POST new project to Jenkins REST API.
+     * GET notification to Jenkins REST API.
      *
-     * @param Git dir
+     * @param IDF_Project
      * @return bool Success
      */
     function processPostUpdate($git_dir)
@@ -47,7 +56,7 @@ class IDF_Plugin_SyncJenkins
             ));
         $url = Pluf::f('idf_plugin_syncjenkins_base_url') . 
             '/git/notifyCommit?url=' . 
-            sprintf(Pluf::f('git_remote_url'), $pname);
+            sprintf(Pluf::f('git_remote_url'), $project->shortname);
         Pluf_Log::debug(array('IDF_Plugin_SyncJenkins::processPostUpdate',
             'HTTP GET', array($url, $params)));
         return $this->_http_request($url, $params);
