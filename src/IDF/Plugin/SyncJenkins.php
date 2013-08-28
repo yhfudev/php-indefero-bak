@@ -33,6 +33,8 @@ class IDF_Plugin_SyncJenkins
                     'Project not found.', array($pname, $params)));
                 return false; // Project not found
             }
+            Pluf_Log::debug(array('IDF_Plugin_SyncJenkins', 'Project found',
+                $pname, $project->id));
             $plug->processPostUpdate($project);
             break;
         }
@@ -46,8 +48,6 @@ class IDF_Plugin_SyncJenkins
      */
     function processPostUpdate($git_dir)
     {
-        // Chop the ".git" and get what is left
-        $pname = basename($params['git_dir'], '.git');
         $params = array('http' => array(
                 'method' => 'GET',
                 'user_agent' => 'Indefero Hook Sender (http://www.indefero.net)',
