@@ -41,6 +41,9 @@ $cfg['secret_key'] = '';
 # problems without 'debug' being enabled).
 $cfg['debug'] = true;
 
+# Log options. Set to Pluf_Log::ERROR or Pluf_Log::OFF in production.
+Pluf_Log::$level = Pluf_Log::ALL;
+
 
 # ---------------------------------------------------------------------------- #
 #                               Path section                                   #
@@ -430,6 +433,27 @@ $cfg['mtn_db_access'] = 'local';
 # Additional configuration files you want to create / copy for new setups.
 # All these file paths have to be relative to $cfg['mtn_confdir'].
 # $cfg['mtn_confdir_extra'] = array('hooks.d/something.lua')
+
+
+# ---------------------------------------------------------------------------- #
+#                                Stash section                                 #
+# ---------------------------------------------------------------------------- #
+
+# The url where the stash instance is running, along with the username and
+# password required to access it.
+# $cfg['idf_plugin_syncstash_base_url'] = 'https://user:password@host.com/stash';
+
+# The name of the project that is used to sync the repositories to
+# $cfg['idf_plugin_syncstash_project'] = 'projectname';
+
+
+# ---------------------------------------------------------------------------- #
+#                               Jenkins section                                #
+# ---------------------------------------------------------------------------- #
+
+# The url where jenkins instance is running, uses `git_remote_url` as the
+# parameter for the request.
+# $cfg['idf_plugin_syncjenkins_base_url'] = 'https://host.com/jenkins';
 
 
 # ---------------------------------------------------------------------------- #
