@@ -35,7 +35,7 @@ class IDF_Plugin_SyncJenkins
             }
             Pluf_Log::debug(array('IDF_Plugin_SyncJenkins', 'Project found',
                 $pname, $project->id));
-            $plug->processPostUpdate($project);
+            $plug->processPostUpdate($project, $params['refs']);
             break;
         }
     }
@@ -44,10 +44,12 @@ class IDF_Plugin_SyncJenkins
      * GET notification to Jenkins REST API.
      *
      * @param IDF_Project
+     * @param array Refs
      * @return bool Success
      */
-    function processPostUpdate($project)
+    function processPostUpdate($project, $refs)
     {
+        $branches = array_map(function($r) { return end(explode('/', $r)); }, $refs);
         $params = array('http' => array(
                 'method' => 'GET',
                 'user_agent' => 'Indefero Hook Sender (http://www.indefero.net)',
@@ -56,7 +58,8 @@ class IDF_Plugin_SyncJenkins
             ));
         $url = Pluf::f('idf_plugin_syncjenkins_base_url') . 
             '/git/notifyCommit?url=' . 
-            IDF_Scm_Git::getAnonymousAccessUrl($project);
+            IDF_Scm_Git::getAnonymousAccessUrl($project) .
+            '&branches=' . implode(',', $branches);
         Pluf_Log::debug(array('IDF_Plugin_SyncJenkins::processPostUpdate',
             'HTTP GET', array($url, $params)));
         return $this->_http_request($url, $params);
