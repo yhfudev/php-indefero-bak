@@ -46,7 +46,7 @@ class IDF_Plugin_SyncJenkins
      * @param IDF_Project
      * @return bool Success
      */
-    function processPostUpdate($git_dir)
+    function processPostUpdate($project)
     {
         $params = array('http' => array(
                 'method' => 'GET',
@@ -56,7 +56,7 @@ class IDF_Plugin_SyncJenkins
             ));
         $url = Pluf::f('idf_plugin_syncjenkins_base_url') . 
             '/git/notifyCommit?url=' . 
-            sprintf(Pluf::f('git_remote_url'), $project->shortname);
+            IDF_Scm_Git::getAnonymousAccessUrl($project);
         Pluf_Log::debug(array('IDF_Plugin_SyncJenkins::processPostUpdate',
             'HTTP GET', array($url, $params)));
         return $this->_http_request($url, $params);
