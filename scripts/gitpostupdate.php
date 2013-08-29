@@ -48,10 +48,11 @@ Pluf_Dispatcher::loadControllers(Pluf::f('idf_views'));
  * [parameters]
  *
  * array('git_dir' => '/path/to/git/repository.git',
+ *       'refs' => ['refs/heads/master', 'refs/heads/develop'],
  *       'env' => array_merge($_ENV, $_SERVER));
  *
  */
-$params = array('git_dir' => $argv[1],
+$params = array('git_dir' => $argv[1], 'refs' => array_slice($argv, 2),
                 'env' => array_merge($_ENV, $_SERVER));
 Pluf_Log::event(array('gitpostupdate.php', 'Send run signal.', $params));
 Pluf_Signal::send('gitpostupdate.php::run', 'gitpostupdate.php', $params);
