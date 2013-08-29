@@ -448,6 +448,15 @@ $cfg['mtn_db_access'] = 'local';
 
 
 # ---------------------------------------------------------------------------- #
+#                               Jenkins section                                #
+# ---------------------------------------------------------------------------- #
+
+# The url where jenkins instance is running, uses `git_remote_url` as the
+# parameter for the request.
+# $cfg['idf_plugin_syncjenkins_base_url'] = 'https://host.com/jenkins';
+
+
+# ---------------------------------------------------------------------------- #
 #                  Hacker section (for advanced users)                         #
 # ---------------------------------------------------------------------------- #
 
