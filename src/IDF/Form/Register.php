@@ -55,11 +55,17 @@ class IDF_Form_Register extends Pluf_Form
                                             'help_text' => __('We will never send you any unsolicited emails. We hate spam too!'),
                                             ));
 
+
         $this->fields['terms'] = new Pluf_Form_Field_Boolean(
                                       array('required' => true,
                                             'label' => __('I agree to the terms and conditions.'),
                                             'initial' => '',
                                             ));
+    }
+
+    public function clean_regkey()
+    {
+
     }
 
     /**
