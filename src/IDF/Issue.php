@@ -348,4 +348,14 @@ class IDF_Issue extends Pluf_Model
 
         Pluf_Translation::loadSetLocale($current_locale);
     }
+
+    public function notifyDueDate() {
+        $sqlIssueTable = $this->getSqlTable();
+        $query = "SELECT * FROM $sqlIssueTable WHERE due_dtime < NOW()";
+        $db = Pluf::db();
+        $data_overdue = $db->select($query);
+        $query = "SELECT * FROM $sqlIssueTable WHERE due_dtime BETWEEN NOW()AND DATE_ADD(NOW(), INTERVAL 1 DAY)";
+        $data = $db->select($query);
+        var_dump($data);
+    }
 }
