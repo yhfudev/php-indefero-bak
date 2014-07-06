@@ -167,6 +167,7 @@ or newer to properly run this version of Indefero!
 - The project list and title has gathered a customizable icon for each project
 - The download section now provides MD5 checksums for uploaded files
 - Wiki pages now come with a designated stylesheet for printer output (issue 713)
+- git repositories are now available under /r/projectname/
 
 ## Bugfixes
 
