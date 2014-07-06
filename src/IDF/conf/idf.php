@@ -508,7 +508,7 @@ $cfg['idf_strong_key_check'] = false;
 # If you do not want to let indefero calculate the sizes of repositories,
 # attachments, or downloads, set this to true. (You can temporarily set this
 # to false in case you want to quickly check some size, of course.)
-# $cfg['idf_no_size_check'] = false;
+$cfg['idf_no_size_check'] = true;
 
 # The file extensions for file uploads (issues and downloads view) are limited.
 # You can allow additional extensions here.

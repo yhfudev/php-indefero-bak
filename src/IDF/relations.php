@@ -109,6 +109,18 @@ Pluf_Signal::connect('mtnpostpush.php::run',
                      array('IDF_Plugin_SyncMonotone', 'entry'));
 
 #
+# stash synchronization
+Pluf_Signal::connect('IDF_Project::created',
+                     array('IDF_Plugin_SyncStash', 'entry'));
+Pluf_Signal::connect('IDF_Project::preDelete',
+                     array('IDF_Plugin_SyncStash', 'entry'));
+
+#
+# jenkins notification
+Pluf_Signal::connect('gitpostupdate.php::run',
+                     array('IDF_Plugin_SyncJenkins', 'entry'));
+
+#
 # -- Processing of the webhook queue --
 Pluf_Signal::connect('queuecron.php::run',
                      array('IDF_Queue', 'process'));
