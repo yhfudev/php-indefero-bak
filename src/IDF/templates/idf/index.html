@@ -1,6 +1,9 @@
 {extends "idf/base-simple.html"}
 {block docclass}yui-t7{/block}
 {block tabhome} class="active"{/block}
+
+
+
 {block subtabs}
 <a href="{url 'IDF_Views::index'}" class="active">{trans 'Home'}</a> |
 <a href="{url 'IDF_Views::listProjects', array('all', 'name')}" class="active">{trans 'Projects'}</a>
@@ -12,5 +15,51 @@
 {/block}
 
 {block context}{/block}
+
+
+
+
+{block subtabs}<a href="{url 'IDF_Views::index'}" class="active">{trans 'Projects'}</a>{/block}
+
+{block context}
+
+{if $projects.count() == 0}
+<p>{trans 'No projects managed with InDefero were found.'}</p>
+
+{if $isAdmin}
+	{aurl 'url', 'IDF_Views_Admin::projectCreate'}
+	<p><a href="{$url}"><img style="vertical-align: text-bottom;" src="{media '/idf/img/add.png'}" alt="+" align="bottom" /></a> <a href="{$url}">{trans 'Create Project'}</a></p>{/if}
+{else}
+	<ul>
+	{foreach $projects as $p}
+		<li>{if $p.private}<img style="vertical-align: text-bottom;" src="{media '/idf/img/lock.png'}" alt="{trans 'Private project'}" /> {/if}
+			<a href="{url 'IDF_Views_Project::home', array($p.shortname)}">{$p}</a>{if $p.shortdesc}, {$p.shortdesc}{/if}
+		</li>
+	{/foreach}
+	</ul>
+{/if}
+{/block}
+
+{block body}
+
+<h3>Latest activity</h3>
+<ul>
+  {foreach $activities as $a}
+    {if $a.type == 'issue'}
+      {aurl 'url', 'IDF_Views_Issue::view', array($a.shortname, $a.id)}
+    {elseif $a.type == 'commit'}
+      {aurl 'url', 'IDF_Views_Source::commit', array($a.shortname, $a.scm_id)}
+    {/if}
+    <li>{$a.creation_dtime} {$a.project_name} <a href="{$url}">{$a.summary}</a> ({$a.type})</li>
+  {/foreach}
+</ul>
+
+r/block}
+
+{block context}
+  <p><strong>{trans 'Managed Projects:'}</strong> {$projects.count()}</p>
+{/block}
+
+
 
 {block foot}<div id="branding">Powered by <a href="http://www.indefero.net" title="InDefero, bug tracking and more">InDefero</a>,<br />a <a href="http://www.ceondo.com">Céondo Ltd</a> initiative.</div>{/block}

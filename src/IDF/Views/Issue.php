@@ -67,7 +67,7 @@ class IDF_Views_Issue
                               );
         $pag->configure($list_display, array(), array('id', 'status', 'due_dtime', 'modif_dtime'));
         $pag->items_per_page = 10;
-        $pag->no_results_text = __('No issues were found.');
+        $pag->no_results_text = __('No issues were found.'. implode(', ', $otags));
         $pag->setFromRequest($request);
         $params = array('project' => $prj,
                         'page_title' => $title,
@@ -1198,5 +1198,4 @@ function IDF_Views_Issue_ShowStatus($field, $issue, $extra='')
 {
     return Pluf_esc($issue->get_status()->name);
 }
-
 

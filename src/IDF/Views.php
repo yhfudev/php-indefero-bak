@@ -38,8 +38,17 @@ class IDF_Views
     {
         $forge = IDF_Forge::instance();
         if (!$forge->isCustomForgePageEnabled()) {
-            $url = Pluf_HTTP_URL_urlForView('IDF_Views::listProjects');
-            return new Pluf_HTTP_Response_Redirect($url);
+            $projects = self::getProjects($request->user);
+            $activity = self::getActivity($request->user);
+
+            return Pluf_Shortcuts_RenderToResponse('idf/index.html', 
+                                               array('page_title' => __('Projects'),
+                                                     'projects' => $projects,
+                                                     'activities' => $activity,
+						                             ),
+                                          $request);
+            /*$url = Pluf_HTTP_URL_urlForView('IDF_Views::listProjects');
+            return new Pluf_HTTP_Response_Redirect($url);*/
         }
 
         return Pluf_Shortcuts_RenderToResponse('idf/index.html',
@@ -371,6 +380,24 @@ class IDF_Views
 
     }
 
+    public function getActivity($user) 
+    {
+      $db =& Pluf::db();
+      $sql = "
+      select p.name as project_name, c.origauthor as author, p.shortname, 'commit'::text as type, summary, c.id, creation_dtime, scm_id from idf_commits c LEFT JOIN idf_projects p on project=p.id
+      ORDER BY creation_dtime DESC
+      LIMIT 500
+      ";
+      foreach ($db->select($sql) as $a) {
+        unset ($aa);
+        foreach($a as $k=>$v) {
+          $aa->$k = $v;
+        }
+        $activities[] = $aa;
+      }
+      return $activities;
+    }
+
     /**
      * Returns a list of ids of projects that are visible for the given user
      *
@@ -437,6 +464,7 @@ class IDF_Views
     public static function getProjects($user, $tag = false, $order = 'name')
     {
         $db =& Pluf::db();
+
         $sql = new Pluf_SQL('1=1');
         if ($tag !== false) {
             $sql->SAnd(new Pluf_SQL('idf_tag_id=%s', $tag->id));
@@ -445,6 +473,16 @@ class IDF_Views
         $projectIds = self::getUserVisibleProjectIds($user);
         if (count($projectIds) == 0) {
             return new ArrayObject();
+        }
+
+        $false = Pluf_DB_BooleanToDb(false, $db);
+        if ($user->isAnonymous()) {
+            $sql = sprintf('%s=%s', $db->qn('private'), $false);
+            return Pluf::factory('IDF_Project')->getList(array('filter'=> $sql,
+                                                               'order' => 'name ASC'));
+        }
+        if ($user->administrator) {
+            return Pluf::factory('IDF_Project')->getList(array('order' => 'name ASC'));
         }
 
         $sql->SAnd(new Pluf_SQL(sprintf($db->pfx.'idf_projects.id IN (%s)', implode(', ', $projectIds))));
