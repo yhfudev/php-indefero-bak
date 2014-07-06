@@ -618,7 +618,7 @@ class IDF_Views
             $forgestats[$key] = $count;
             $forgestats['total'] += $count;
         }
-	$forgestats['proj_count'] = count($projects);
+	    $forgestats['proj_count'] = count($projects);
         return $forgestats;
     }
 }
