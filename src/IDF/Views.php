@@ -121,7 +121,7 @@ class IDF_Views
         $v = new Pluf_Views();
         $request->POST['login'] = (isset($request->POST['login'])) ? mb_strtolower($request->POST['login']) : '';
         return $v->login($request, $match, Pluf::f('login_success_url'),
-                         array(), 'idf/login_form.html');
+                         array('register' => Pluf::f('allow_register')), 'idf/login_form.html');
     }
 
     /**
@@ -143,24 +143,41 @@ class IDF_Views
      */
     function register($request, $match)
     {
-        $title = __('Create Your Account');
-        $params = array('request'=>$request);
-        if ($request->method == 'POST') {
-            $form = new IDF_Form_Register(array_merge(
+        if (Pluf::f('allow_register')) {
+            $title = __('Create Your Account');
+            $params = array('request'=>$request);
+            if ($request->method == 'POST') {
+                $form = new IDF_Form_Register(array_merge(
             									(array)$request->POST,
 												(array)$request->FILES
 												), $params);
-            if ($form->isValid()) {
-                $user = $form->save(); // It is sending the confirmation email
-                $url = Pluf_HTTP_URL_urlForView('IDF_Views::registerInputKey');
-                return new Pluf_HTTP_Response_Redirect($url);
+                if ($form->isValid()) {
+                    $user = $form->save(); // It is sending the confirmation email
+                    $url = Pluf_HTTP_URL_urlForView('IDF_Views::registerInputKey');
+                    return new Pluf_HTTP_Response_Redirect($url);
+                }
+            } else {
+                if (isset($request->GET['login'])) {
+                    $params['initial'] = array('login' => $request->GET['login']);
+                }
+                $form = new IDF_Form_Register(null, $params);
             }
+
+            $context = new Pluf_Template_Context(array());
+            $tmpl = new Pluf_Template('idf/terms.html');
+            $terms = Pluf_Template::markSafe($tmpl->render($context));
+            return Pluf_Shortcuts_RenderToResponse('idf/register/index.html', 
+                                                   array('page_title' => $title,
+                                                         'form' => $form,
+                                                         'terms' => $terms),
+                                                   $request);
         } else {
-            if (isset($request->GET['login'])) {
-                $params['initial'] = array('login' => $request->GET['login']);
-            }
-            $form = new IDF_Form_Register(null, $params);
+            $title = __('The administrator has disabled registration');
+            return Pluf_Shortcuts_RenderToResponse('idf/register/not_allowed.html',
+                array('page_title' => $title),
+                $request);
         }
+
         $context = new Pluf_Template_Context(array());
         $tmpl = new Pluf_Template('idf/terms.html');
         $terms = Pluf_Template::markSafe($tmpl->render($context));
@@ -169,6 +186,7 @@ class IDF_Views
                                                      'form' => $form,
                                                      'terms' => $terms),
                                                $request);
+
     }
 
     /**
